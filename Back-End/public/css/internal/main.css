@@ -1,0 +1,333 @@
+
+html,
+body
+{
+    font-size: medium;
+    /* font-size:10px; */
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+a
+{
+    text-decoration: none;
+    color: inherit;
+}
+
+div#txt
+{
+    float:right;
+    width:auto;
+    max-width: 100%;
+    background-color: red;
+}
+
+h1
+{
+    font-family: inherit;
+    font-size:large;
+    text-align:center;
+}
+
+header h1
+{
+    text-align: left;
+}
+
+h1 img
+{
+    width: 50px;
+}
+
+
+div.button_bar
+{
+    background-color:Cornsilk ;
+}
+
+div.search_bar
+{
+    text-align:right;
+    background-color:Cornsilk ;
+}
+
+
+div.login
+{
+    float:right;
+    /* background-color:white; */
+}
+
+div.produit
+{
+    background-color:white;
+    border:blue 2px solid;
+    width:auto;
+    max-width: 100%;
+    height:auto;
+    float:left;
+    margin:1mm;
+    padding:1mm;
+    /* overflow-y:scroll;  */
+}
+
+main article.main_article
+{
+    background-color:white;
+    border:green 2px solid;
+    width:auto;
+    max-width: 100%;
+    margin: 0;
+    padding:1mm;
+}
+
+main article.main_article div.img
+{
+    width:80%;
+    margin:auto;
+}
+
+main article.main_article div img
+{
+    width:100%;
+}
+
+
+article.breaking
+{
+    background-color:white;
+    border:blue 2px solid;
+    width:auto;
+    max-width: 100%;
+    /*height:7cm;*/
+    float:left;
+    margin:1mm;
+    padding:1mm;
+    /* overflow-y:scroll;  */
+}
+
+article.breaking img
+{
+    width:100%;
+}
+
+aside
+{
+    float:right;
+    width:auto;
+    max-width: 100%;
+    margin:1mm;
+    padding:1mm;
+}
+
+article.side
+{
+    background-color:white;
+    border:blue 2px solid;
+    width:100%;
+    margin:1mm;
+    padding:1mm;
+}
+
+div.produit div.formule
+{
+    font-weight:bold;
+}
+
+div.produit ul li
+{
+}
+
+div.produit .prix
+{
+    background-color:lightgreen;
+}
+
+div.produit .activation
+{
+    background-color:yellow;
+}
+
+div.produit .in_cart
+{
+    /* background-color:plum; */
+    color:DarkMagenta;
+    font-weight:bold;
+}
+
+div.recap table
+{
+    border:blue 1px solid;
+    margin:2px;
+    padding:2px;
+}
+
+div.recap td
+{
+    background-color:whitesmoke;
+    margin:0;
+    padding:2px;
+    border-width: 1px 0;
+    border-color:blue;
+}
+
+div.recap td.total ,
+div.recap th.total
+{
+    border-top: blue 2px solid;
+    border-bottom: blue 2px solid;
+    margin:2px;
+    padding:2px;
+    font-weight:bold;
+}
+
+div.recap td.prix
+{
+    font-family: Courier, monospace ;
+    text-align: right;
+}
+
+hr
+{
+    clear: both;
+}
+
+form.home-main-toggle
+{
+    text-align:right;
+    margin: 0 0 4px 0;
+}
+
+.main-articles ul,
+.secondary-articles ul
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-articles .main-article-image img
+{
+    max-width: 100%;
+    height: auto;
+}
+
+.secondary-articles ul.secondary-grid
+{
+    display: grid;
+    gap: 8px;
+}
+
+.secondary-articles ul.secondary-grid.cols-2
+{
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.secondary-articles ul.secondary-grid.cols-3
+{
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.secondary-articles ul.secondary-grid.cols-4
+{
+    grid-template-columns: repeat(4, 1fr);
+}
+
+footer img
+{
+    width: 40px;
+    height: 30px;
+}
+
+/* Presentation options: propagate chosen text color across Bootstrap components */
+
+body.text-primary .card,
+body.text-danger .card,
+body.text-dark .card,
+body.text-primary .card-title,
+body.text-danger .card-title,
+body.text-dark .card-title,
+body.text-primary .card-text,
+body.text-danger .card-text,
+body.text-dark .card-text,
+body.text-primary .list-group-item,
+body.text-danger .list-group-item,
+body.text-dark .list-group-item,
+body.text-primary .navbar,
+body.text-danger .navbar,
+body.text-dark .navbar,
+body.text-primary .navbar-brand,
+body.text-danger .navbar-brand,
+body.text-dark .navbar-brand,
+body.text-primary .nav-link,
+body.text-danger .nav-link,
+body.text-dark .nav-link,
+body.text-primary .dropdown-item,
+body.text-danger .dropdown-item,
+body.text-dark .dropdown-item,
+body.text-primary label,
+body.text-danger label,
+body.text-dark label,
+body.text-primary input,
+body.text-danger input,
+body.text-dark input,
+body.text-primary select,
+body.text-danger select,
+body.text-dark select,
+body.text-primary textarea,
+body.text-danger textarea,
+body.text-dark textarea,
+body.text-primary th,
+body.text-danger th,
+body.text-dark th,
+body.text-primary td,
+body.text-danger td,
+body.text-dark td,
+body.text-primary .text-muted,
+body.text-danger .text-muted,
+body.text-dark .text-muted,
+body.text-primary .text-secondary,
+body.text-danger .text-secondary,
+body.text-dark .text-secondary,
+body.text-primary .text-body,
+body.text-danger .text-body,
+body.text-dark .text-body,
+body.text-primary .text-body-secondary,
+body.text-danger .text-body-secondary,
+body.text-dark .text-body-secondary,
+body.text-primary .text-body-tertiary,
+body.text-danger .text-body-tertiary,
+body.text-dark .text-body-tertiary
+{
+    color: inherit !important;
+}
+
+/* Keep readable contrast for active nav pills */
+body.text-primary .nav-pills .nav-link.active,
+body.text-danger .nav-pills .nav-link.active,
+body.text-dark .nav-pills .nav-link.active
+{
+    color: #fff !important;
+}
+
+body.text-primary .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-info):not(.btn-dark):not(.btn-light),
+body.text-danger .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-info):not(.btn-dark):not(.btn-light),
+body.text-dark .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-info):not(.btn-dark):not(.btn-light)
+{
+    color: inherit !important;
+}
+
+/* Menu */
+ul.menu
+{
+    padding:0;
+    margin:0;
+    list-style-type:none;
+}
+
+span.compteur
+{
+    border:4px blue dotted;
+}
+
