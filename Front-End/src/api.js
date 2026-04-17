@@ -1,21 +1,20 @@
 /**
- * api.js - Module centralisé pour les appels fetch vers le back-end PHP
- * Toutes les requêtes passent par api.php avec credentials pour la session
+ * api.js - Module centralise pour les appels fetch vers le back-end PHP
+ * Toutes les requetes passent par le routeur MVC via index.php?page=api_*
  */
 
-// URL relative — Vite proxy redirige /api.php vers http://back-end/public/api.php
-const API_BASE = '/api.php'
+const API_BASE = '/index.php'
 
-async function apiCall(action, params = {}, method = 'GET') {
-  let url = `${API_BASE}?action=${action}`
+async function apiCall(page, params = {}, method = 'GET') {
+  const searchParams = new URLSearchParams({ page, ...(method === 'GET' ? params : {}) })
+  const url = `${API_BASE}?${searchParams.toString()}`
+
   const options = {
     method,
+    credentials: 'include',
   }
 
-  if (method === 'GET') {
-    const query = new URLSearchParams(params).toString()
-    if (query) url += '&' + query
-  } else {
+  if (method !== 'GET') {
     options.headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
     options.body = new URLSearchParams(params).toString()
   }
@@ -24,65 +23,70 @@ async function apiCall(action, params = {}, method = 'GET') {
   if (!response.ok) {
     throw new Error(`Erreur HTTP ${response.status}`)
   }
+
+  const contentType = response.headers.get('content-type') || ''
+  if (!contentType.includes('application/json')) {
+    const body = await response.text()
+    throw new Error(`Réponse non JSON reçue: ${body.slice(0, 120)}`)
+  }
+
   return response.json()
 }
 
-// BLOC A — Détail article
 export function getArticleDetail(id) {
-  return apiCall('detail', { id })
+  return apiCall('api_detail', { id })
 }
 
-// BLOC A — Liste articles
 export function getArticles(limit = null, offset = 0) {
   const params = { offset }
   if (limit) params.limit = limit
-  return apiCall('articles', params)
+  return apiCall('api_articles', params)
 }
 
-// BLOC B — Favoris
+export function getArticlesByDate(date) {
+  return apiCall('api_articles_by_date', { date })
+}
+
 export function addFavorite(id) {
-  return apiCall('favorite_add', { id }, 'POST')
+  return apiCall('api_favorite_add', { id }, 'POST')
 }
 
 export function removeFavorite(id) {
-  return apiCall('favorite_remove', { id }, 'POST')
+  return apiCall('api_favorite_remove', { id }, 'POST')
 }
 
 export function clearFavorites() {
-  return apiCall('favorite_clear', {}, 'POST')
+  return apiCall('api_favorite_clear', {}, 'POST')
 }
 
 export function getFavorites() {
-  return apiCall('favorite_list')
+  return apiCall('api_favorite_list')
 }
 
 export function checkFavorite(id) {
-  return apiCall('favorite_check', { id })
+  return apiCall('api_favorite_check', { id })
 }
 
-// BLOC C — Recherche
 export function searchArticles(keyword = '', categoryId = 0, reporterId = 0) {
-  return apiCall('search', {
+  return apiCall('api_search', {
     keyword,
     category_id: categoryId,
     reporter_id: reporterId,
   })
 }
 
-// BLOC D — Login / Session
 export function login(loginName, password) {
-  return apiCall('login', { login: loginName, password }, 'POST')
+  return apiCall('api_login', { login: loginName, password }, 'POST')
 }
 
 export function logout() {
-  return apiCall('logout', {}, 'POST')
+  return apiCall('api_logout', {}, 'POST')
 }
 
 export function getSession() {
-  return apiCall('session')
+  return apiCall('api_session')
 }
 
-// BLOC E — Bannière
 export function getBanner() {
-  return apiCall('banner')
+  return apiCall('api_banner')
 }

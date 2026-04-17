@@ -2,7 +2,6 @@
   <footer class="footer">
     <div class="container py-5">
       <div class="row">
-        <!-- Logo / Nom du site -->
         <div class="col-md-4 mb-4 mb-md-0">
           <div class="footer-brand">
             <img src="/src/image/Logo_Presse_Océan.svg.png" alt="Logo" class="footer-logo">
@@ -13,7 +12,6 @@
           </p>
         </div>
 
-        <!-- Liens du footer -->
         <div class="col-md-4 mb-4 mb-md-0">
           <h6 class="footer-section-title">Liens rapides</h6>
           <ul class="footer-links">
@@ -30,7 +28,6 @@
           </ul>
         </div>
 
-        <!-- Infos -->
         <div class="col-md-4">
           <h6 class="footer-section-title">Informations</h6>
           <ul class="footer-info">
@@ -46,11 +43,19 @@
         </div>
       </div>
 
-      <!-- Footer bottom -->
+      <div class="col-md-4 articles-by-date">
+        <h6 class="footer-section-title">Vérifier</h6>
+        <div class="date-search">
+          <input v-model="date" type="date" class="date-input">
+          <button class="date-button" @click="search">Vérifier</button>
+          <span v-if="result !== null" class="date-result">{{ result }} article(s)</span>
+        </div>
+      </div>
+
       <div class="footer-bottom">
         <div class="footer-divider"></div>
         <div class="footer-content-bottom">
-          <p class="footer-copyright">&copy; 2026 Presse Océan. Tous droits réservés.</p>
+          <p class="footer-copyright">© 2026 Presse Océan. Tous droits réservés.</p>
           <div class="footer-credit">
             <span>Développé pour le projet ISFCE</span>
           </div>
@@ -61,13 +66,31 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { getArticlesByDate } from '../api.js'
+
 const links = [
   { text: 'Accueil', to: '/' },
   { text: 'Articles', to: '/articles' },
   { text: 'Favoris', to: '/favoris' },
-  { text: 'Recherche', to: '/Formulaire' },
-  { text: 'À Propos', to: '/Apropos' }
+  { text: 'Recherche', to: '/formulaire' },
+  { text: 'A Propos', to: '/apropos' },
 ]
+
+const date = ref('')
+const result = ref(null)
+
+async function search() {
+  if (!date.value) return
+
+  try {
+    const data = await getArticlesByDate(date.value)
+    result.value = data.success ? data.count : 0
+  } catch (e) {
+    console.error('Erreur verification date:', e)
+    result.value = 0
+  }
+}
 </script>
 
 <style scoped>
@@ -205,7 +228,43 @@ const links = [
   font-style: italic;
 }
 
-/* Responsive */
+.articles-by-date {
+  margin-top: 1.5rem;
+}
+
+.date-search {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.date-button {
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.date-result {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
   .footer {
     padding: 2rem 0 1rem 0;

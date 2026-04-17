@@ -2,6 +2,8 @@
 
 function main_favorite(): string
 {
+    controller_handle_global_layout_actions('favorite');
+
     // actions (session favorites)
     if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && ($_POST['fav_action'] ?? '') === 'remove') {
         $id = (int)($_POST['ident_art'] ?? 0);
@@ -27,7 +29,7 @@ function main_favorite(): string
 
     // view
     return join("\n", [
-        html_head(get_menu()),
+        html_head(get_menu(), controller_get_layout_context('favorite')),
         html_favorites_page($articles),
         html_foot(),
     ]);

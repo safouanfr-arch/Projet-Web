@@ -40,7 +40,11 @@
                 <span>📄</span>
               </div>
               <div class="favorite-overlay">
-                <router-link :to="{ name: 'ArticleDetail', params: { id: item.ident_art } }" class="btn btn-sm btn-primary overlay-link">
+                <router-link
+                  :to="{ name: 'ArticleDetail', params: { id: item.ident_art } }"
+                  class="btn btn-sm btn-primary overlay-link"
+                  @click="recordArticleClick"
+                >
                   Lire l'article →
                 </router-link>
               </div>
@@ -52,7 +56,11 @@
                 <span class="reading-time">⏱️ {{ item.readtime_art }} min</span>
               </div>
               <div class="favorite-actions">
-                <router-link :to="{ name: 'ArticleDetail', params: { id: item.ident_art } }" class="link-read">
+                <router-link
+                  :to="{ name: 'ArticleDetail', params: { id: item.ident_art } }"
+                  class="link-read"
+                  @click="recordArticleClick"
+                >
                   Lire →
                 </router-link>
                 <button class="btn-remove" @click="retirerFavori(item.ident_art)" title="Retirer des favoris">
@@ -69,10 +77,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { getFavorites, removeFavorite, clearFavorites } from '../api.js'
+import { recordArticleClick } from '../article-ui.js'
 
-const router = useRouter()
 const favoris = ref([])
 const loading = ref(true)
 const mediaBase = '/media/'

@@ -8,7 +8,7 @@ function html_article_detail(array $article): string
 
     $title = htmlspecialchars($article['title_art'] ?? '');
     $hook = htmlspecialchars($article['hook_art'] ?? '');
-    $content = $article['content_art'] ?? '';
+    $content = sanitize_article_html((string)($article['content_art'] ?? ''));
     $date = htmlspecialchars($article['date_art'] ?? '');
     $readtime = (int)($article['readtime_art'] ?? 0);
     $image = htmlspecialchars($article['image_art'] ?? '');

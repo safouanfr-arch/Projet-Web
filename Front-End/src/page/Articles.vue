@@ -2,12 +2,11 @@
   <div id="principal-container" class="container mt-4 mb-5">
     <div class="articles-header mb-5">
       <h1>Tous les articles</h1>
-      <p class="text-muted subtitle" v-if="articles.length">{{ articles.length }} article(s) disponible(s)</p>
-      <p class="text-muted subtitle" v-else>Chargement des articles...</p>
+      <p v-if="articles.length" class="text-muted subtitle">{{ articles.length }} article(s) disponible(s)</p>
+      <p v-else class="text-muted subtitle">Chargement des articles...</p>
     </div>
 
     <div class="row">
-      <!-- Liste des articles en grille -->
       <div class="col-12">
         <section class="articles-grid">
           <article
@@ -33,32 +32,7 @@
       </div>
     </div>
 
-    <!-- Fenetre d'apercu au survol (chargee via fetch async depuis la BDD) -->
-    <div v-if="hoveredDetail" class="preview-popup">
-      <div class="preview-header">
-        <h3>Aperçu</h3>
-      </div>
-      <div class="preview-content">
-        <p><strong>Date :</strong> <em>{{ hoveredDetail.detail.date_art }}</em></p>
-        <p><strong>Temps de lecture :</strong> <em>{{ hoveredDetail.detail.readtime_art }} min</em></p>
-        <p v-if="hoveredDetail.detail.word_count"><strong>Mots :</strong> <em>{{ hoveredDetail.detail.word_count }}</em></p>
-        <p class="hook-preview">{{ hoveredDetail.detail.hook_art }}</p>
-        <!-- user/admin : categorie -->
-        <p v-if="hoveredDetail.detail.category_name">
-          <strong>Catégorie :</strong> <span class="category-badge">{{ hoveredDetail.detail.category_name }}</span>
-        </p>
-        <!-- admin : infos supplementaires -->
-        <template v-if="hoveredDetail.role === 'admin'">
-          <div class="admin-info">
-            <p class="admin-label">📊 Infos Admin</p>
-            <p><strong>Titre :</strong> {{ hoveredDetail.detail.title_art }}</p>
-            <p><strong>Auteur :</strong> {{ hoveredDetail.detail.reporter_name }}</p>
-            <p><strong>ID :</strong> {{ hoveredDetail.detail.ident_art }}</p>
-            <p><strong>Image :</strong> {{ hoveredDetail.detail.image_art }}</p>
-          </div>
-        </template>
-      </div>
-    </div>
+    <ArticlePreviewPopup :payload="hoveredDetail" />
   </div>
 </template>
 
@@ -67,11 +41,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getArticles } from '../api.js'
 import { fetchArticleDetail } from '../components/detail.js'
+import ArticlePreviewPopup from '../components/ArticlePreviewPopup.vue'
+import { recordArticleClick } from '../article-ui.js'
 
 const router = useRouter()
 const articles = ref([])
 const hoveredDetail = ref(null)
-const mediaBase = '/media/'
 
 onMounted(async () => {
   try {
@@ -84,7 +59,6 @@ onMounted(async () => {
   }
 })
 
-// Survol : requete asynchrone via detail.js (fetch) vers detail_fetch.php
 async function loadHoverDetail(id) {
   try {
     const data = await fetchArticleDetail(id)
@@ -96,8 +70,8 @@ async function loadHoverDetail(id) {
   }
 }
 
-// Clic : naviguer vers la page de detail
 function loadDetail(id) {
+  recordArticleClick()
   router.push({ name: 'ArticleDetail', params: { id } })
 }
 </script>
@@ -205,119 +179,9 @@ function loadDetail(id) {
   color: var(--secondary-color);
 }
 
-/* Preview popup styling */
-.preview-popup {
-  position: fixed;
-  top: 120px;
-  right: 2rem;
-  width: 320px;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  animation: slideInRight 0.3s ease;
-  overflow: hidden;
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.preview-header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: white;
-  padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.preview-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.preview-content {
-  padding: 1.25rem;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.preview-content p {
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-  color: #4b5563;
-}
-
-.preview-content strong {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.hook-preview {
-  background: #f9fafb;
-  padding: 0.75rem;
-  border-left: 3px solid var(--primary-color);
-  border-radius: 4px;
-  font-style: italic;
-  margin: 1rem 0 !important;
-}
-
-.category-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.admin-info {
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid #fcd34d;
-  border-radius: 6px;
-  padding: 0.75rem;
-  margin-top: 1rem;
-}
-
-.admin-label {
-  color: #b45309;
-  font-weight: 700;
-  margin-bottom: 0.5rem !important;
-  font-size: 0.85rem;
-}
-
-.admin-info p {
-  font-size: 0.85rem;
-  color: #6b5104;
-  margin-bottom: 0.5rem;
-}
-
-.admin-info strong {
-  color: #b45309;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .articles-grid {
     grid-template-columns: 1fr;
-  }
-
-  .preview-popup {
-    position: fixed;
-    top: auto;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    width: auto;
   }
 
   .articles-header h1 {

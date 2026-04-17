@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/api.php': {
+      '/index.php': {
         target: 'http://back-end/public',
         changeOrigin: true,
       },

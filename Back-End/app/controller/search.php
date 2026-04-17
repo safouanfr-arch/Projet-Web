@@ -2,6 +2,8 @@
 
 function main_search():string
 {
+    controller_handle_global_layout_actions('search');
+
     // model
     $categories = CategoryModel::getAll();
     $reporters = ReporterModel::getAll();
@@ -33,7 +35,7 @@ function main_search():string
 
     // view
 	return join( "\n", [
-		html_head(get_menu()),
+		html_head(get_menu(), controller_get_layout_context('search')),
         html_search_page($criteria, $categories, $reporters, $results),
 		html_foot(),
 	]);

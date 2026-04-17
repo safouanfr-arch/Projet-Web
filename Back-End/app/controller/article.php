@@ -2,6 +2,8 @@
 
 function main_article():string
 {
+    controller_handle_global_layout_actions('article');
+
     // model
     // http://4ipw3-aww/?page=article&ident_art=4
     // $_GET["ident_art"]  => 4
@@ -14,7 +16,7 @@ function main_article():string
     
     // view
 	return join( "\n", [
-		html_head(get_menu()),
+		html_head(get_menu(), controller_get_layout_context('article')),
 		html_article_detail($article),
 		html_foot(),
 	]);

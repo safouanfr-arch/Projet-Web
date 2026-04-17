@@ -2,6 +2,8 @@
 
 function main_articles(): string
 {
+    controller_handle_global_layout_actions('articles');
+
     // actions (session favorites)
     if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && ($_POST['fav_action'] ?? '') === 'add') {
         $id = (int)($_POST['ident_art'] ?? 0);
@@ -27,7 +29,7 @@ function main_articles(): string
 
     // view
     return join("\n", [
-        html_head(get_menu()),
+        html_head(get_menu(), controller_get_layout_context('articles')),
         html_articles_list($articles, $favorites),
         html_foot(),
     ]);

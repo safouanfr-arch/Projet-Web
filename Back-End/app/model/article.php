@@ -20,7 +20,7 @@ class ArticleModel
             $q = "SELECT *
                   FROM `t_article`
                   ORDER BY date_art DESC
-                  LIMIT $limit OFFSET $offset"; // sert à la pagination (afficher un nombre limité d'articles par page)
+                  LIMIT $limit OFFSET $offset";
             return db_select($q);
         }
 
@@ -35,8 +35,8 @@ class ArticleModel
         $q = "SELECT *
               FROM `t_article`
               WHERE ident_art = :id";
-        $rows = db_select_prepare($q, [ 'id' => (int)$id ]);
-        return $rows[0] ?? []; // retourne le premier résultat ou un tableau vide si aucun résultat trouvé
+        $rows = db_select_prepare($q, ['id' => (int)$id]);
+        return $rows[0] ?? [];
     }
 
     public static function search(array $criteria): array
@@ -45,19 +45,10 @@ class ArticleModel
         $params = [];
         $order = "date_art DESC";
 
-        $keyword = trim((string)($criteria['keyword'] ?? '')); // on force un string et on enlève les espaces superflus
+        $keyword = trim((string)($criteria['keyword'] ?? ''));
         if ($keyword !== '') {
-            $where[] = "(title_art LIKE :kw OR hook_art LIKE :kw OR content_art LIKE :kw)";
-            // match partiel (contient) pour que 'a' ou 'mot' retourne des résultats
+            $where[] = "title_art LIKE :kw";
             $params['kw'] = "%$keyword%";
-            $order = "
-                CASE
-                    WHEN title_art LIKE :kw THEN 3
-                    WHEN hook_art LIKE :kw THEN 2
-                    WHEN content_art LIKE :kw THEN 1
-                    ELSE 0
-                END DESC,
-                date_art DESC"; // on trie d'abord par pertinence (titre > chapeau > contenu) garce au DESC, puis par date décroissante
         }
 
         $categoryId = (int)($criteria['category_id'] ?? 0);
@@ -89,7 +80,7 @@ class ArticleModel
             return [];
         }
 
-        $placeholders = implode(',', array_fill(0, count($ids), '?')); // génère une chaîne de points d'interrogation séparés par des virgules en fonction du nombre d'IDs commencant par l'index 0, ex: "?, ?, ?"
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $q = "SELECT *
               FROM `t_article`
               WHERE ident_art IN ($placeholders)
@@ -105,7 +96,7 @@ class ArticleModel
 
         $excludeIds = array_values(array_filter(array_map('intval', $excludeIds), fn($v) => $v > 0));
 
-        $params = [ $readtime ];
+        $params = [$readtime];
         $excludeSql = '';
         if (!empty($excludeIds)) {
             $placeholders = implode(',', array_fill(0, count($excludeIds), '?'));
@@ -149,7 +140,15 @@ class ArticleModel
               FROM `t_article`
               WHERE readtime_art = :rt
               ORDER BY date_art DESC";
-        return db_select_prepare($q, [ 'rt' => $readtime ]);
+        return db_select_prepare($q, ['rt' => $readtime]);
+    }
+
+    public static function countByDate(string $date): int
+    {
+        $q = "SELECT COUNT(*) AS cnt
+              FROM `t_article`
+              WHERE DATE(date_art) = :date";
+        $rows = db_select_prepare($q, ['date' => $date]);
+        return (int)($rows[0]['cnt'] ?? 0);
     }
 }
-

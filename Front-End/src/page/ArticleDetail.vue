@@ -12,8 +12,7 @@
     <div v-else-if="article" class="article-detail">
       <router-link to="/articles" class="btn btn-outline-secondary mb-3">&larr; Retour aux articles</router-link>
 
-      <!-- Visitor : resume seulement -->
-      <h1 v-if="role === 'user' || role === 'admin'">{{ article.title_art }}</h1>
+      <h1>{{ article.title_art }}</h1>
 
       <img
         v-if="article.image_art"
@@ -26,10 +25,12 @@
 
       <div class="article-content" v-html="article.content_art"></div>
 
-      <!-- User + Admin : date, duree de lecture, categorie -->
-      <div v-if="role === 'user' || role === 'admin'" class="mt-4 p-3 bg-light rounded">
+      <div v-if="detail" class="mt-4 p-3 bg-light rounded">
         <p class="mb-1"><strong>Date :</strong> {{ article.date_art }}</p>
         <p class="mb-1"><strong>Duree de lecture :</strong> {{ article.readtime_art }} min</p>
+        <p v-if="detail.reporter_name" class="mb-1">
+          <strong>Auteur :</strong> {{ detail.reporter_name }}
+        </p>
         <p v-if="detail && detail.category_name" class="mb-1">
           <strong>Categorie :</strong> {{ detail.category_name }}
         </p>
@@ -48,15 +49,23 @@
       </div>
 
       <!-- Bannière publicitaire -->
-      <div v-if="banner && banner.banner_4IPDW" class="mt-5 mb-4">
-        <a :href="banner.banner_4IPDW.link" target="_blank">
+      <div v-if="banner" class="mt-5 mb-4">
+        <a v-if="banner.url" :href="banner.url" target="_blank" rel="noopener">
           <img
-            v-if="banner.banner_4IPDW.image"
-            :src="banner.banner_4IPDW.image"
-            :alt="banner.banner_4IPDW.text"
+            v-if="banner.image"
+            :src="banner.image"
+            :alt="banner.title || banner.text"
           >
-          <p>{{ banner.banner_4IPDW.text }}</p>
+          <p>{{ banner.text }}</p>
         </a>
+        <div v-else>
+          <img
+            v-if="banner.image"
+            :src="banner.image"
+            :alt="banner.title || banner.text"
+          >
+          <p>{{ banner.text }}</p>
+        </div>
       </div>
     </div>
   </div>

@@ -103,6 +103,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { searchArticles } from '../api.js'
+import { recordArticleClick } from '../article-ui.js'
 
 const router = useRouter()
 const keyword = ref('')
@@ -135,6 +136,7 @@ async function lancerRecherche() {
 }
 
 function loadDetail(id) {
+  recordArticleClick()
   router.push({ name: 'ArticleDetail', params: { id } })
 }
 </script>

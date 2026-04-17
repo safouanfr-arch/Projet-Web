@@ -1,65 +1,18 @@
 <?php
 
-function html_head(array $menu_a = []): string
+function html_head(array $menu_a = [], array $context = []): string
 {
-    $allowedFonts = [
-        'arial' => 'Arial, sans-serif',
-        'times' => '"Times New Roman", Times, serif',
-        'consolas' => 'Consolas, "Courier New", monospace',
-    ];
+    $bodyFontFamily = (string)($context['body_font_family'] ?? 'Arial, sans-serif');
+    $bodyTextClass = (string)($context['body_text_class'] ?? 'text-dark');
+    $currentPage = (string)($context['current_page'] ?? 'home');
+    $currentSubpage = (string)($context['current_subpage'] ?? '');
+    $articleClickTotal = (int)($context['article_click_total'] ?? 0);
+    $homeMainCompact = !empty($context['home_main_compact']);
 
-    $allowedColors = [
-        'noir' => 'text-dark',
-        'bleu' => 'text-primary',
-        'rouge' => 'text-danger',
-    ];
-
-    if (($_POST['click_action'] ?? '') === 'reset') {
-        unset($_SESSION['article_click_total']);
-        header('Location: ' . ($_SERVER['REQUEST_URI'] ?? './index.php'));
-        exit;
-    }
-
-    if (($_POST['presentation_action'] ?? '') === 'save') {
-        $fontKey = (string)($_POST['presentation_font'] ?? '');
-        $colorKey = (string)($_POST['presentation_color'] ?? '');
-
-        if (!array_key_exists($fontKey, $allowedFonts)) {
-            $fontKey = 'arial';
-        }
-        if (!array_key_exists($colorKey, $allowedColors)) {
-            $colorKey = 'noir';
-        }
-
-        $expire = time() + (60 * 60 * 24 * 30);
-        setcookie('presentation_font', $fontKey, $expire, '/');
-        setcookie('presentation_color', $colorKey, $expire, '/'); //Garde la police et la couleur choisies pendant 30 jours, pour tout le site.
-
-        header('Location: ' . ($_SERVER['REQUEST_URI'] ?? './index.php'));
-        exit;
-    }
-
-    $fontKey = (string)($_COOKIE['presentation_font'] ?? 'arial');
-    $colorKey = (string)($_COOKIE['presentation_color'] ?? 'noir');
-
-    if (!array_key_exists($fontKey, $allowedFonts)) {
-        $fontKey = 'arial';
-    }
-    if (!array_key_exists($colorKey, $allowedColors)) {
-        $colorKey = 'noir';
-    }
-
-    $bodyFontFamily = $allowedFonts[$fontKey];
-    $bodyTextClass = $allowedColors[$colorKey];
-
-    $currentPage = (string)($_REQUEST['page'] ?? 'home');
-    $currentSubpage = (string)($_REQUEST['subpage'] ?? '');
-
-    // Générer le menu HTML
     $menu_s = '<ul class="menu nav nav-pills flex-wrap gap-2 mb-0">';
     foreach ($menu_a as $item) {
-        $visual  = trim((string)($item[0] ?? ''));
-        $comp    = trim((string)($item[1] ?? 'home'));
+        $visual = trim((string)($item[0] ?? ''));
+        $comp = trim((string)($item[1] ?? 'home'));
         $subcomp = trim((string)($item[2] ?? ''));
 
         if ($visual === '' && $comp === '') {
@@ -76,7 +29,7 @@ function html_head(array $menu_a = []): string
         }
 
         $menu_s .= '<li class="nav-item">'
-            . '<a class="nav-link rounded-pill px-3' . $activeClass . '"' . $ariaCurrent . ' href="' . $href . '">' 
+            . '<a class="nav-link rounded-pill px-3' . $activeClass . '"' . $ariaCurrent . ' href="' . $href . '">'
             . htmlspecialchars($visual)
             . '</a>'
             . '</li>';
@@ -86,9 +39,10 @@ function html_head(array $menu_a = []): string
     $headerIconWebPath = './icon/icon3.png';
     $headerIconFsPath = __DIR__ . '/../../public/icon/icon3.png';
     $isHome = ($currentPage === 'home');
-    $homeMainCompact = (string)($_COOKIE['home_main_compact'] ?? '') === '1';
-
-    $articleClickTotal = (int)($_SESSION['article_click_total'] ?? 0);
+    $currentPageUrl = '?page=' . htmlspecialchars($currentPage);
+    if ($currentSubpage !== '') {
+        $currentPageUrl .= '&subpage=' . htmlspecialchars($currentSubpage);
+    }
 
     $mainCssPath = __DIR__ . '/../../public/css/internal/main.css';
     $mainCssVersion = is_file($mainCssPath) ? (string)filemtime($mainCssPath) : (string)time();
@@ -119,8 +73,8 @@ function html_head(array $menu_a = []): string
             </div>
 
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="small">Clics sur les articles : <?= (int)$articleClickTotal ?></span>
-                <form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? './index.php') ?>" class="m-0">
+                <span class="small">Clics sur les articles : <?= $articleClickTotal ?></span>
+                <form method="post" action="<?= $currentPageUrl ?>" class="m-0">
                     <input type="hidden" name="click_action" value="reset" />
                     <button class="btn btn-sm btn-outline-secondary" type="submit">Réinitialiser</button>
                 </form>

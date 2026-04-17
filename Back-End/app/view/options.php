@@ -1,6 +1,6 @@
 <?php
 
-function html_options_page(): string
+function html_options_page(string $fontKey, string $colorKey): string
 {
     $allowedFonts = [
         'arial' => 'Arial',
@@ -13,9 +13,6 @@ function html_options_page(): string
         'bleu' => 'Bleu',
         'rouge' => 'Rouge',
     ];
-
-    $fontKey = (string)($_COOKIE['presentation_font'] ?? 'arial');
-    $colorKey = (string)($_COOKIE['presentation_color'] ?? 'noir');
 
     if (!array_key_exists($fontKey, $allowedFonts)) {
         $fontKey = 'arial';
@@ -65,4 +62,3 @@ function html_options_page(): string
     <?php
     return ob_get_clean();
 }
-

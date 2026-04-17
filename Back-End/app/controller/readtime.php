@@ -2,6 +2,8 @@
 
 function main_readtime(): string
 {
+    controller_handle_global_layout_actions('readtime');
+
     $selected = (int)($_REQUEST['readtime'] ?? 0);
 
     // model
@@ -13,7 +15,7 @@ function main_readtime(): string
 
     // view
     return join("\n", [
-        html_head(get_menu()),
+        html_head(get_menu(), controller_get_layout_context('readtime')),
         html_readtime_page($readtimes, $selected, $articles),
         html_foot(),
     ]);

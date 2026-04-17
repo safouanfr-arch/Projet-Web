@@ -28,11 +28,13 @@ async function toggleFavori() {
       const data = await removeFavorite(props.articleId)
       if (data.success) {
         isFavori.value = false
+        window.dispatchEvent(new CustomEvent('session-changed'))
       }
     } else {
       const data = await addFavorite(props.articleId)
       if (data.success) {
         isFavori.value = true
+        window.dispatchEvent(new CustomEvent('session-changed'))
       }
     }
   } catch (e) {

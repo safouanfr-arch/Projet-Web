@@ -1,15 +1,17 @@
 <template>
   <div class="container mt-4">
     <div class="row" v-if="articles.length >= 7">
-      <!-- Carte principale 1 -->
       <div class="col-md-4">
         <div class="card-principale p-3">
           <div class="sous-cartes mt-3">
-            <div class="carte-interne"
-                 v-for="art in articles.slice(0, 3)" :key="art.ident_art"
-                 @mouseover="loadHoverDetail(art.ident_art)"
-                 @mouseleave="hoveredDetail = null"
-                 @click="loadDetail(art.ident_art)">
+            <div
+              v-for="art in articles.slice(0, 3)"
+              :key="art.ident_art"
+              class="carte-interne"
+              @mouseover="loadHoverDetail(art.ident_art)"
+              @mouseleave="hoveredDetail = null"
+              @click="loadDetail(art.ident_art)"
+            >
               <img :src="mediaBase + art.image_art" class="image" :alt="art.title_art">
               <div class="contenu ms-3 flex-grow-1"><h5>{{ art.title_art }}</h5></div>
               <BoutonFav :articleId="art.ident_art" />
@@ -18,15 +20,17 @@
         </div>
       </div>
 
-      <!-- Carte principale 2 -->
       <div class="col-md-4">
         <div class="card-principale p-3">
           <div class="sous-cartes mt-3">
-            <div class="carte-interne"
-                 v-for="art in articles.slice(3, 5)" :key="art.ident_art"
-                 @mouseover="loadHoverDetail(art.ident_art)"
-                 @mouseleave="hoveredDetail = null"
-                 @click="loadDetail(art.ident_art)">
+            <div
+              v-for="art in articles.slice(3, 5)"
+              :key="art.ident_art"
+              class="carte-interne"
+              @mouseover="loadHoverDetail(art.ident_art)"
+              @mouseleave="hoveredDetail = null"
+              @click="loadDetail(art.ident_art)"
+            >
               <img :src="mediaBase + art.image_art" class="image" :alt="art.title_art">
               <div class="contenu ms-3 flex-grow-1"><h5>{{ art.title_art }}</h5></div>
               <BoutonFav :articleId="art.ident_art" />
@@ -35,15 +39,17 @@
         </div>
       </div>
 
-      <!-- Carte principale 3 -->
       <div class="col-md-4">
         <div class="card-principale p-3">
           <div class="sous-cartes mt-3">
-            <div class="carte-interne"
-                 v-for="art in articles.slice(5, 7)" :key="art.ident_art"
-                 @mouseover="loadHoverDetail(art.ident_art)"
-                 @mouseleave="hoveredDetail = null"
-                 @click="loadDetail(art.ident_art)">
+            <div
+              v-for="art in articles.slice(5, 7)"
+              :key="art.ident_art"
+              class="carte-interne"
+              @mouseover="loadHoverDetail(art.ident_art)"
+              @mouseleave="hoveredDetail = null"
+              @click="loadDetail(art.ident_art)"
+            >
               <img :src="mediaBase + art.image_art" class="image" :alt="art.title_art">
               <div class="contenu ms-3 flex-grow-1"><h5>{{ art.title_art }}</h5></div>
               <BoutonFav :articleId="art.ident_art" />
@@ -53,43 +59,27 @@
       </div>
     </div>
 
-    <!-- Fenetre d'apercu au survol (chargee via fetch async depuis la BDD) -->
-    <div v-if="hoveredDetail" class="preview-popup">
-      <p><em>Date : {{ hoveredDetail.detail.date_art }}</em></p>
-      <p><em>Temps de lecture : {{ hoveredDetail.detail.readtime_art }} min</em></p>
-      <p v-if="hoveredDetail.detail.word_count"><em>Mots : {{ hoveredDetail.detail.word_count }}</em></p>
-      <p>{{ hoveredDetail.detail.hook_art }}</p>
-      <!-- user/admin : categorie -->
-      <p v-if="hoveredDetail.detail.category_name">
-        <strong>Categorie :</strong> {{ hoveredDetail.detail.category_name }}
-      </p>
-      <!-- admin : infos supplementaires -->
-      <template v-if="hoveredDetail.role === 'admin'">
-        <p><strong>Titre :</strong> {{ hoveredDetail.detail.title_art }}</p>
-        <p><strong>Auteur :</strong> {{ hoveredDetail.detail.reporter_name }}</p>
-        <p><strong>ID :</strong> {{ hoveredDetail.detail.ident_art }}</p>
-        <p><strong>Image :</strong> {{ hoveredDetail.detail.image_art }}</p>
-      </template>
-    </div>
+    <ArticlePreviewPopup :payload="hoveredDetail" />
   </div>
 </template>
 
 <script setup>
-import BoutonFav from './boutonFav.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import BoutonFav from './boutonFav.vue'
+import ArticlePreviewPopup from './ArticlePreviewPopup.vue'
 import { fetchArticleDetail } from './detail.js'
+import { recordArticleClick } from '../article-ui.js'
 
 const router = useRouter()
 
-const props = defineProps({
-  articles: { type: Array, required: true }
+defineProps({
+  articles: { type: Array, required: true },
 })
 
 const hoveredDetail = ref(null)
 const mediaBase = '/media/'
 
-// Survol : requete asynchrone via detail.js (fetch) vers detail_fetch.php
 async function loadHoverDetail(id) {
   try {
     const data = await fetchArticleDetail(id)
@@ -101,8 +91,8 @@ async function loadHoverDetail(id) {
   }
 }
 
-// Clic : naviguer vers la page de detail
 function loadDetail(id) {
+  recordArticleClick()
   router.push({ name: 'ArticleDetail', params: { id } })
 }
 </script>
@@ -114,18 +104,4 @@ function loadDetail(id) {
 .carte-interne:hover { transform: scale(1.02); }
 .image { width: 75px; height: 60px; object-fit: cover; border-radius: 5px; }
 .contenu { margin-left: 10px; flex-grow: 1; }
-.preview-popup {
-  position: fixed;
-  top: 100px;
-  right: 30px;
-  width: 250px;
-  padding: 10px;
-  background: #fff;
-  border: 2px solid #333;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  z-index: 100;
-}
-.detail-overlay { background-color: #fdfdfd; }
-.detail-overlay img { max-height: 300px; object-fit: cover; width: 100%; }
 </style>

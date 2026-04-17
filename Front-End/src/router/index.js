@@ -8,32 +8,32 @@ const routes = [
 		component: () => import('../page/Accueil.vue')
 	},
 	{
-		path: '/Favoris',
+		path: '/favoris',
 		name: 'Favoris',
 		component: () => import('../page/Favoris.vue')
 	},
 
 	{
-		path: '/Articles',
+		path: '/articles',
 		name: 'Articles',
 		component: () => import('../page/Articles.vue')
 	},
 
 	{
-		path: '/Formulaire',
+		path: '/formulaire',
 		name: 'Formulaire',
 		component: () => import('../page/Formulaire.vue')
 	},
 
 
 	{
-		path: '/Connexion',
+		path: '/connexion',
 		name: 'Connexion',
 		component: () => import('../page/Connexion.vue')
 	},
 
 	{
-		path: '/Apropos',
+		path: '/apropos',
 		name: 'Apropos',
 		component: () => import('../page/Apropos.vue')
 	},

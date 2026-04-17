@@ -2,25 +2,31 @@
 
 function main_home():string
 {
+    controller_handle_global_layout_actions('home');
+
     if (($_POST['home_action'] ?? '') === 'toggle_main_compact') {
-        $current = (string)($_COOKIE['home_main_compact'] ?? '') === '1'; // true si actuellement compact, false sinon
+        $current = controller_get_home_preferences()['main_compact'];
         $newValue = $current ? '0' : '1';
         $expire = time() + (60 * 60 * 24 * 30);
         setcookie('home_main_compact', $newValue, $expire, '/');
-        header('Location: ?page=home');
+        header('Location: ' . controller_page_url('home'));
         exit;
     }
 
     if (($_POST['home_action'] ?? '') === 'set_secondary_cols') {
         $cols = (int)($_POST['home_secondary_cols'] ?? 3);
+        if (!in_array($cols, [2, 3, 4], true)) {
+            $cols = 3;
+        }
         $expire = time() + (60 * 60 * 24 * 30);
         setcookie('home_secondary_cols', (string)$cols, $expire, '/');
-        header('Location: ?page=home');
+        header('Location: ' . controller_page_url('home'));
         exit;
     }
 
     // model
     $all_articles = ArticleModel::getLatest(10);
+    $homePreferences = controller_get_home_preferences();
     
     // organiser les articles
     $featured = isset($all_articles[0]) ? $all_articles[0] : null;
@@ -46,8 +52,15 @@ function main_home():string
 
     // view
 	return join( "\n", [
-		html_head(get_menu()),
-        html_home_page($featured, $main, $secondary, $readtime3),
+		html_head(get_menu(), controller_get_layout_context('home')),
+        html_home_page(
+            $featured,
+            $main,
+            $secondary,
+            $readtime3,
+            $homePreferences['main_compact'],
+            $homePreferences['secondary_cols']
+        ),
 		html_foot(),
 	]);
 

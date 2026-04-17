@@ -15,11 +15,9 @@ function include_mvc_php_files()
 		foreach ( $file_a as $file)
 		{
 			if( substr( $file, -4, 4 ) != ".php" ) continue;
-			// echo($file."\n");
 			require_once( ROOT_DIR.$dir.DIRECTORY_SEPARATOR.$file );
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,9 +28,24 @@ session_start();
 include_mvc_php_files();
 
 // select page to load, ie. function to call
-// $page = @$_GET['page'] ?: 'home';
 // making router more universal => using superglobal REQUEST instead of POST or GET
-$page = @$_REQUEST['page'] ?: 'home';
-$main = "main_{$page}";
-echo $main();
+$page = $_REQUEST['page'] ?? 'home';
+$isApiPage = (strncmp($page, 'api_', 4) === 0);
 
+if ($isApiPage) {
+	api_handle_preflight_if_needed();
+}
+
+$main = "main_{$page}";
+if (!function_exists($main)) {
+	if ($isApiPage) {
+		echo api_json_response(['success' => false, 'error' => 'API inconnue: ' . $page], 404);
+		return;
+	}
+
+	http_response_code(404);
+	echo 'Page inconnue';
+	return;
+}
+
+echo $main();
