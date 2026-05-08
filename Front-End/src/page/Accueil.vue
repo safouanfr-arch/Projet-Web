@@ -60,15 +60,16 @@ import { getArticles } from '../api.js'
 const choixColonnes = ref('3')
 const articles = ref([])
 
-onMounted(async () => {
-  try {
-    const data = await getArticles()
-    if (data.success) {
-      articles.value = data.articles
-    }
-  } catch (e) {
-    console.error('Erreur chargement articles accueil:', e)
-  }
+onMounted(() => {
+  getArticles()
+    .then((data) => {
+      if (data.success) {
+        articles.value = data.articles
+      }
+    })
+    .catch((e) => {
+      console.error('Erreur chargement articles accueil:', e)
+    })
 })
 </script>
 

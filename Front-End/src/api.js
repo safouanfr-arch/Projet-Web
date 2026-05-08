@@ -5,7 +5,7 @@
 
 const API_BASE = '/index.php'
 
-async function apiCall(page, params = {}, method = 'GET') {
+function apiCall(page, params = {}, method = 'GET') {
   const searchParams = new URLSearchParams({ page, ...(method === 'GET' ? params : {}) })
   const url = `${API_BASE}?${searchParams.toString()}`
 
@@ -19,18 +19,21 @@ async function apiCall(page, params = {}, method = 'GET') {
     options.body = new URLSearchParams(params).toString()
   }
 
-  const response = await fetch(url, options)
-  if (!response.ok) {
-    throw new Error(`Erreur HTTP ${response.status}`)
-  }
+  return fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP ${response.status}`)
+      }
 
-  const contentType = response.headers.get('content-type') || ''
-  if (!contentType.includes('application/json')) {
-    const body = await response.text()
-    throw new Error(`Réponse non JSON reçue: ${body.slice(0, 120)}`)
-  }
+      const contentType = response.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        return response.text().then((body) => {
+          throw new Error(`Reponse non JSON recue: ${body.slice(0, 120)}`)
+        })
+      }
 
-  return response.json()
+      return response.json()
+    })
 }
 
 export function getArticleDetail(id) {

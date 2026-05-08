@@ -48,26 +48,28 @@ const router = useRouter()
 const articles = ref([])
 const hoveredDetail = ref(null)
 
-onMounted(async () => {
-  try {
-    const data = await getArticles()
-    if (data.success) {
-      articles.value = data.articles
-    }
-  } catch (e) {
-    console.error('Erreur chargement articles:', e)
-  }
+onMounted(() => {
+  getArticles()
+    .then((data) => {
+      if (data.success) {
+        articles.value = data.articles
+      }
+    })
+    .catch((e) => {
+      console.error('Erreur chargement articles:', e)
+    })
 })
 
-async function loadHoverDetail(id) {
-  try {
-    const data = await fetchArticleDetail(id)
-    if (data.success) {
-      hoveredDetail.value = data
-    }
-  } catch (e) {
-    console.error('Erreur chargement detail survol:', e)
-  }
+function loadHoverDetail(id) {
+  fetchArticleDetail(id)
+    .then((data) => {
+      if (data.success) {
+        hoveredDetail.value = data
+      }
+    })
+    .catch((e) => {
+      console.error('Erreur chargement detail survol:', e)
+    })
 }
 
 function loadDetail(id) {

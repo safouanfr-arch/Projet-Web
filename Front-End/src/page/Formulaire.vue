@@ -114,25 +114,27 @@ const reporters = ref([])
 const results = ref([])
 const loading = ref(false)
 
-onMounted(async () => {
+onMounted(() => {
   // Charger les catégories, reporters et les articles récents au montage
-  await lancerRecherche()
+  lancerRecherche()
 })
 
-async function lancerRecherche() {
+function lancerRecherche() {
   loading.value = true
-  try {
-    const data = await searchArticles(keyword.value, selectedCategory.value, selectedReporter.value)
-    if (data.success) {
-      results.value = data.results
-      if (data.categories) categories.value = data.categories
-      if (data.reporters) reporters.value = data.reporters
-    }
-  } catch (e) {
-    console.error('Erreur recherche:', e)
-  } finally {
-    loading.value = false
-  }
+  searchArticles(keyword.value, selectedCategory.value, selectedReporter.value)
+    .then((data) => {
+      if (data.success) {
+        results.value = data.results
+        if (data.categories) categories.value = data.categories
+        if (data.reporters) reporters.value = data.reporters
+      }
+    })
+    .catch((e) => {
+      console.error('Erreur recherche:', e)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 function loadDetail(id) {
