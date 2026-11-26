@@ -72,7 +72,8 @@ function api_build_favorite_response(?int $checkedId = null): array
 
 function api_remote_json_get(string $url): ?array
 {
-    $response = @file_get_contents($url);
+    $context = stream_context_create(['http' => ['timeout' => 3, 'follow_location' => 0]]);
+    $response = @file_get_contents($url, false, $context);
     if ($response === false) {
         return null;
     }
@@ -89,6 +90,7 @@ function api_remote_json_post_form(string $url, array $fields, int $timeout = 10
             'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
             'content' => http_build_query($fields),
             'timeout' => $timeout,
+            'follow_location' => 0,
         ],
     ]);
 

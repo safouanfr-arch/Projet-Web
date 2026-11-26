@@ -9,30 +9,29 @@ function main_api_login(): string
         return api_json_response(['success' => false, 'error' => 'Login et mot de passe requis'], 400);
     }
 
-    $data = api_remote_json_post_form(
-        'http://playground.burotix.be/login',
-        [
-            'login' => $login,
-            'password' => $password,
-        ]
-    );
-
-    if ($data === null) {
-        return api_json_response(['success' => false, 'error' => 'Impossible de contacter le serveur d\'authentification'], 502);
+    if (getenv('PRESS_DEMO') === '1') {
+        if (!hash_equals('reader', $login) || !hash_equals('demo', $password)) {
+            return api_json_response(['success' => false, 'error' => 'Identifiants incorrects'], 401);
+        }
+        $data = ['name' => 'reader', 'role' => 'user'];
+    } else {
+        $url = (string)getenv('PRESS_AUTH_URL');
+        if (parse_url($url, PHP_URL_SCHEME) !== 'https') {
+            return api_json_response(['success' => false, 'error' => 'Connexion indisponible'], 503);
+        }
+        $data = api_remote_json_post_form($url, ['login' => $login, 'password' => $password]);
+        if ($data === null) {
+            return api_json_response(['success' => false, 'error' => 'Service indisponible'], 502);
+        }
+        if (!empty($data['error']) || empty($data['name'] ?? $data['username'] ?? $data['login'])) {
+            return api_json_response(['success' => false, 'error' => 'Identifiants incorrects'], 401);
+        }
     }
 
-    if (!empty($data['error'])) {
-        return api_json_response(['success' => false, 'error' => (string)$data['error']], 401);
-    }
-
-    $role = $data['role'] ?? $data['group'] ?? null;
-    if (!$role) {
-        $role = (strtolower($login) === 'admin') ? 'admin' : 'user';
-    }
-
+    session_regenerate_id(true);
     $_SESSION['user'] = [
         'name' => $data['name'] ?? $data['username'] ?? $data['login'] ?? $login,
-        'role' => strtolower((string)$role),
+        'role' => strtolower((string)($data['role'] ?? $data['group'] ?? 'user')),
     ];
 
     return api_json_response([

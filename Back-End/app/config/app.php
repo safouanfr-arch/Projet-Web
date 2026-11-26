@@ -2,7 +2,7 @@
 
 
 
-const ROOT_DIR = "../app/";
+const ROOT_DIR = __DIR__ . '/../';
 
 const AJAX_ENABLED = true;   // false;
 

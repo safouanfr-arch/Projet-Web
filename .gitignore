@@ -1,0 +1,5 @@
+/Back-End/var/
+/Front-End/node_modules/
+/Front-End/dist/
+.env
+.env.local

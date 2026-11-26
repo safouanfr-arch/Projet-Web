@@ -2,7 +2,12 @@
 
 function main_api_banner(): string
 {
-    $banner = api_remote_json_get('http://playground.burotix.be/adv/banner_for_isfce.json');
+    $url = (string)getenv('PRESS_BANNER_URL');
+    if (parse_url($url, PHP_URL_SCHEME) !== 'https') {
+        return api_json_response(['success' => true, 'banner' => null]);
+    }
+
+    $banner = api_remote_json_get($url);
     if ($banner === null) {
         return api_json_response(['success' => false, 'error' => 'Impossible de charger la bannière'], 502);
     }

@@ -2,7 +2,7 @@
 
 function get_menu()
 {
-    $menu_s = file_get_contents('../asset/database/menu.csv');
+    $menu_s = file_get_contents(__DIR__ . '/../../asset/database/menu.csv');
     $menu_a = explode( "\n", $menu_s);
     $menu_aa = [];
     foreach ( $menu_a as $menu_item_s )

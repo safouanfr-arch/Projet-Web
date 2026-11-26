@@ -1,6 +1,6 @@
 <?php
-require_once "../app/config/app.php";
-require_once "../app/config/model.php";
+require_once __DIR__ . '/../app/config/app.php';
+require_once __DIR__ . '/../app/config/model.php';
 
 /**
  * include all MVC PHP files
